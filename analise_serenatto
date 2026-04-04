@@ -1,0 +1,103 @@
+# analise_serenatto.py
+
+# Este é um arquivo inicial para análise de dados do projeto Serenatto.
+# Adicione seu código de análise abaixo.
+
+# Os objetivos deste arquivo são:
+# 1. Praticar a programação em Python para análise de dados.
+# 2. Exercitar a aplicação prática dos conhecimentos da Matemática a análise de dados.
+# 3. Praticar a utilização do git e github para controle de versão
+
+# Bibliotecas
+import pandas as pd # Para manipulação de dados 
+import requests # Para baixar o arquivo do Google Drive
+from io import StringIO # Para ler o arquivo CSV diretamente da string
+
+# Carregar o arquivo para análise dos dados e levantamentos iniciais da estrutura desta base de dados.
+file_id = '1hoHOVEnAjmwTxRbzxuKNNYe3NRb31P5w'
+url = f'https://drive.google.com/uc?export=download&id={file_id}'
+response = requests.get(url)
+df = pd.read_csv(StringIO(response.text))
+
+print("")
+print("ESTRUTURA DA TABELA")
+print("=====================================")
+df.groupby('data').count() # Preciso saber quantas linhas e colunsa tem
+print("Linhas e Colunas")
+print(df.shape)
+print("=====================================")
+print("Quais as colunas existentes na tabela?")
+for col in df.columns: 
+    print(col)      
+print("=====================================")
+print("ANALISES DE CADA COLUNA")
+print("=====================================")
+print("Data")
+print(df['data'].min())  
+print(df['data'].max())
+print("======================================")
+# Preciso saber a lista de todos os produtos da tabela,quantas vezes aparece e o percentual de cada um
+contagem = df['produto'].value_counts()
+percentual = df['produto'].value_counts(normalize=True) * 100
+print("Produto")
+print("-" * 50)
+for produto in contagem.index:
+    valores = df[df['produto'] == produto]['valor']
+    if valores.nunique() == 1:
+        # produto tem um único valor
+        valor_str = f"R$ {valores.iloc[0]:.2f}"
+    else:
+        # produto tem valores variados
+        valor_str = f"R$ {valores.min():.2f} a R$ {valores.max():.2f}"
+    print(f"{produto:<20} {contagem[produto]:>5} - {percentual[produto]:.1f}% | {valor_str}")
+print("-" * 50)
+print(f"TOTAL = {contagem.sum()} - 100%")
+print("=====================================")
+# Quais os métodos de pagamento mais utilizados e o percentual de cada um
+contagem_pagamento = df['metodo_pagamento'].value_counts()
+percentual_pagamento = df['metodo_pagamento'].value_counts(normalize=True) * 100
+soma_pagamento = df.groupby('metodo_pagamento')['valor'].sum()
+print("Método de Pagamento")
+print("-" * 60)
+for metodo in contagem_pagamento.index:
+    print(f"{metodo:<20} {contagem_pagamento[metodo]:>5} - {percentual_pagamento[metodo]:.1f}% | R$ {soma_pagamento[metodo]:>.2f}")
+print("-" * 60)
+print(f"TOTAL = {contagem_pagamento.sum()} - 100% | R$ {soma_pagamento.sum():.2f}")
+print("-" * 60)
+print("=====================================")
+print("=====================================")
+print("=====================================")
+# print("ESTUDO DAS APLICAÇÕES MATEMÁTICAS NA CIÊNCIA DE DADOS")
+# print("===================================")
+# print("FRAÇÕES E PROPORÇÕES")
+# print(Participação de mercado por produto")
+# print("Qual fração das vendas totais cada produto representa? Qual é o peso relativo de cada item no faturamento?")
+# print("---------------------------------")
+# print("Proporção por método de pagamento")
+# print("Que fração dos clientes prefere PIX, crédito, débito ou dinheiro? Como isso varia por mês?")
+# print("===================================")
+# print("POTENCIAÇÃO E CRESCIMENTO")
+# print("Taxa de crescimento composto (CAGR mensal)")
+# print("O faturamento está crescendo ou caindo mês a mês? Qual é a taxa de crescimento composto entre julho e dezembro?")
+# print ("Índice de popularidade dos produtos")
+# print ("Ao elevar ao quadrado a frequência e normalizar, identificamos produtos "super-vendedores" vs. nicho.")
+# print("===================================")
+# print ("RADICIAÇÃO E ESTATÍSTICA")
+# print ("Desvio padrão dos preços")
+# print ("O desvio padrão (raiz quadrada da variância) mede a dispersão dos preços. Os produtos têm preços homogêneos ou muito dispersos?")
+# print ("Normalização de vendas (Z-score)")
+# print ("Padronizar as vendas em unidades de desvio padrão permite comparar produtos em escalas diferentes.")
+# print("===================================")
+# print ("LOGARITMO")
+# print ("Escala logarítmica de faturamento")
+# print ("Quando produtos têm vendas muito diferentes (ex: 5 vs. 200 unidades), usar log10 comprime a escala e revela padrões ocultos.")
+# print ("Entropia de Shannon — diversidade de vendas")
+# print ("Usa logaritmo para medir quão "diversificado" é o mix de produtos. Alta entropia = clientes pedem de tudo. Baixa = concentrado em poucos itens.")
+# print("===================================")
+# print ("COMBINANDO TUDOCombinando tudo")
+# print ("Regressão linear de faturamento mensal")
+# print ("Combina médias, raízes e potências para encontrar a reta que melhor descreve a tendência de crescimento.")
+# print("===================================")
+
+
+
